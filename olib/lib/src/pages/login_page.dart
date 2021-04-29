@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:olib/src/widgets/aureole.dart';
+
+import '../tools/transition.dart';
+import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -6,75 +10,119 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-    Widget _backButton() {
-    return InkWell(
-      onTap: () {
-        Navigator.pop(context);
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: Row(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(left: 0, top: 10, bottom: 10),
-              child: Icon(Icons.keyboard_arrow_left, color: Colors.black),
-            ),
-            Text('Back',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
-          ],
+
+  //final storage = new FlutterSecureStorage();
+  final _formKey = GlobalKey<FormState>();
+  String _email;
+  String _password;
+  bool isLoading = false;
+  FocusNode nodeEmail = FocusNode();
+  FocusNode nodePassword = FocusNode();
+
+  Widget _emailField() {
+    return Theme(
+        data: Theme.of(context).copyWith(primaryColor: Colors.greenAccent[700]),
+        child: TextFormField(
+          keyboardType: TextInputType.emailAddress,
+          decoration: new InputDecoration(
+            border: InputBorder.none,
+            hintText: 'Email',
+            icon: Icon(Icons.email),
+          ),
+          onFieldSubmitted: (term) {
+            FocusScope.of(context).requestFocus(nodePassword);
+          },
+          focusNode: nodeEmail,
+          validator: (value) {
+            if (value.isEmpty) return 'Please enter your email';
+            if (value.isNotEmpty && !value.contains('@'))
+              return 'Email is not valid';
+            setState(() => _email = value);
+            return null;
+          },
         ),
-      ),
-    );
+      );
   }
 
-  Widget _entryField(String title, {bool isPassword = false}) {
+  Widget passwordField() => Theme(
+    data: Theme.of(context).copyWith(primaryColor: Colors.greenAccent[700]),
+    child: TextFormField(
+      obscureText: true,
+      decoration: InputDecoration(
+        border: InputBorder.none,
+        hintText: 'Password',
+        icon: Icon(Icons.vpn_key),
+      ),
+      focusNode: nodePassword,
+      onFieldSubmitted: (term) => _login(),
+      validator: (value) {
+        if (value.isEmpty) return 'Please enter a password';
+        setState(() => _password = value);
+        return null;
+      },
+    ),
+  );
+
+
+  // ---------------------------------------
+  Widget decorateTextField(Widget textfield) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          TextField(
-              obscureText: isPassword,
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  fillColor: Color(0xfff3f3f4),
-                  filled: true))
+      margin: const EdgeInsets.only(top: 15.0, left: 30.0, right: 30),
+      padding: const EdgeInsets.all(7),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: new BorderRadius.all(const Radius.circular(22.0)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.orange,
+            blurRadius: 5.0,
+            offset: Offset(
+              0.0,
+              1.0,
+            ),
+          )
         ],
       ),
+      child: textfield,
     );
   }
 
   Widget _submitButton() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.symmetric(vertical: 15),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
-          ],
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Color(0xfffbb448), Color(0xfff7892b)])),
-      child: Text(
-        'Login',
-        style: TextStyle(fontSize: 20, color: Colors.white),
-      ),
+    return InkWell(
+      onTap: () => _login(),
+      child: Container(
+        height: 50,
+        margin: EdgeInsets.symmetric(horizontal: 30),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(22)),
+            boxShadow: <BoxShadow>[
+              _boxShadow(Colors.white)
+            ],
+            gradient: _linearGradient()),
+        child: Text(
+          'Login',
+          style: TextStyle(fontSize: 30, color: Colors.white, fontFamily: 'unicorn',),
+        ),
+      )
     );
   }
+
+  _boxShadow(Color col) => BoxShadow(
+    color: col,
+    offset: Offset(2, 4),
+    blurRadius: 5,
+    spreadRadius: 2
+  );
+
+  _linearGradient() {
+    return LinearGradient(
+      begin: Alignment.centerLeft,
+      end: Alignment.centerRight,
+      colors: [Colors.deepOrange, Colors.orange],
+      tileMode: TileMode.repeated);
+  }
+
 
   Widget _divider() {
     return Container(
@@ -88,16 +136,18 @@ class _LoginPageState extends State<LoginPage> {
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Divider(
-                thickness: 1,
+                thickness: 2,
+                color: Colors.black
               ),
             ),
           ),
-          Text('or'),
+          Text('or', style: TextStyle(color: Colors.black),),
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Divider(
-                thickness: 1,
+                thickness: 2,
+                color: Colors.black
               ),
             ),
           ),
@@ -172,7 +222,7 @@ class _LoginPageState extends State<LoginPage> {
           children: <Widget>[
             Text(
               'Don\'t have an account ?',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black),
             ),
             SizedBox(
               width: 10,
@@ -180,8 +230,8 @@ class _LoginPageState extends State<LoginPage> {
             Text(
               'Register',
               style: TextStyle(
-                  color: Color(0xfff79c4f),
-                  fontSize: 13,
+                  color: Colors.deepOrange,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600),
             ),
           ],
@@ -190,29 +240,13 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _title() {
-    return RichText(
-      textAlign: TextAlign.center,
-      text: TextSpan(
-          text: 'd',
-          children: [
-            TextSpan(
-              text: 'ev',
-              style: TextStyle(color: Colors.black, fontSize: 30),
-            ),
-            TextSpan(
-              text: 'rnz',
-              style: TextStyle(color: Color(0xffe46b10), fontSize: 30),
-            ),
-          ]),
-    );
-  }
-
   Widget _emailPasswordWidget() {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        _entryField("Email id"),
-        _entryField("Password", isPassword: true),
+        decorateTextField(_emailField()),
+        SizedBox(height: 15,),
+        decorateTextField(passwordField()),
       ],
     );
   }
@@ -221,62 +255,58 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
-        body: Container(
-      height: height,
-      child: Stack(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(height: height * .2),
-                  _title(),
-                  SizedBox(height: 50),
-                  _emailPasswordWidget(),
-                  SizedBox(height: 20),
-                  _submitButton(),
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    alignment: Alignment.centerRight,
-                    child: Text('Forgot Password ?',
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w500)),
-                  ),
-                  _divider(),
-                  SizedBox(height: height * .055),
-                  _createAccountLabel(),
-                ],
-              ),
+      backgroundColor: Colors.grey[300],
+      body: Container(
+        height: height ,
+        child: Stack(
+          children: [
+            Positioned(
+              bottom: 15,
+              right: -MediaQuery.of(context).size.width * .46,
+              child: Aureole(-3.5, Colors.greenAccent[700], Colors.green[400])
             ),
-          ),
-          Positioned(top: 40, left: 0, child: _backButton()),
-        ],
-      ),
-    ));
-  }
-  /*@override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: ListView(
-        shrinkWrap: true,
-        children: [
-          _olibLogo(),
-          SizedBox(height: 40,),
-          SizedBox(height: 40)
-        ],
-      ),
-      
+            Positioned(
+              top: 1,
+              left: -MediaQuery.of(context).size.width * .32,
+              child: Aureole(-1, Colors.greenAccent[700], Colors.green[400])
+            ),
+            Container(
+              child: ListView(
+              shrinkWrap: true,
+              children: [
+                SizedBox(height: 30),
+                _olibLogo(),
+                SizedBox(height: 20),
+                Form(
+                  key: _formKey,
+                  child: _emailPasswordWidget(),
+                ),
+                SizedBox(height: 30),
+                _submitButton(),
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  margin: EdgeInsets.all(5),
+                  alignment: Alignment.centerRight,
+                  child: Text('Forgot Password ?',
+                      style: TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black)),
+                ),
+                _divider(),
+                SizedBox(height: 10),
+                _createAccountLabel(),
+              ],
+                      )
+            )
+          ]
+        ),
+      )
     );
   }
 
   //--------------------
   _olibLogo() {
     return Container(
-      height: 250,
+      height: 200,
       child: Stack(
         children: [
           Hero(
@@ -286,17 +316,22 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 Container(
                   alignment: Alignment.center,
-                  padding: EdgeInsets.fromLTRB(25, 10, 25, 10),
-                  margin: EdgeInsets.only(top: 50, left: 50, right: 50),
+                  padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                  margin: EdgeInsets.only(top: 50, left: 75, right: 75),
                   child: Text("OLIB",
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 44,
                     fontWeight: FontWeight.bold,
-                    color: Colors.orange[800]
+                    fontFamily: 'unicorn',
+                    letterSpacing: 15,
+                    color: Colors.deepOrange
                   )),
                   decoration: BoxDecoration(
+                    boxShadow: <BoxShadow> [
+                      _boxShadow(Colors.white38)
+                    ],
                     border: Border.all(color: Colors.white, width: 3),
-                    borderRadius: BorderRadius.all(Radius.circular(40))
+                    borderRadius: BorderRadius.all(Radius.circular(20))
                   ),
                 )
               ],
@@ -305,5 +340,17 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     );
-  }*/
+  }
+
+  _login() async {
+    if (_formKey.currentState.validate()) {
+      isLoading = true;
+      Map body = { "email": _email, "password": _password};
+      print(body);
+      Navigator.of(context).push(Transition(
+        nextPage: Home(),
+        type: TransitionType.leftToRight
+      ));
+    }
+  }
 }
