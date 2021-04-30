@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:olib/src/pages/main_page.dart';
 import 'package:olib/src/widgets/aureole.dart';
 
 import '../tools/transition.dart';
-import 'home_page.dart';
+import '../tools/theme.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -11,7 +12,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
-  //final storage = new FlutterSecureStorage();
   final _formKey = GlobalKey<FormState>();
   String _email;
   String _password;
@@ -21,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _emailField() {
     return Theme(
-        data: Theme.of(context).copyWith(primaryColor: Colors.greenAccent[700]),
+        data: Theme.of(context).copyWith(primaryColor: ThemeColor.green700),
         child: TextFormField(
           keyboardType: TextInputType.emailAddress,
           decoration: new InputDecoration(
@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget passwordField() => Theme(
-    data: Theme.of(context).copyWith(primaryColor: Colors.greenAccent[700]),
+    data: Theme.of(context).copyWith(primaryColor: ThemeColor.green700),
     child: TextFormField(
       obscureText: true,
       decoration: InputDecoration(
@@ -70,11 +70,11 @@ class _LoginPageState extends State<LoginPage> {
       margin: const EdgeInsets.only(top: 15.0, left: 30.0, right: 30),
       padding: const EdgeInsets.all(7),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ThemeColor.white,
         borderRadius: new BorderRadius.all(const Radius.circular(22.0)),
         boxShadow: [
           BoxShadow(
-            color: Colors.orange,
+            color: ThemeColor.orange,
             blurRadius: 5.0,
             offset: Offset(
               0.0,
@@ -97,12 +97,12 @@ class _LoginPageState extends State<LoginPage> {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(22)),
             boxShadow: <BoxShadow>[
-              _boxShadow(Colors.white)
+              _boxShadow(ThemeColor.white)
             ],
             gradient: _linearGradient()),
         child: Text(
           'Login',
-          style: TextStyle(fontSize: 30, color: Colors.white, fontFamily: 'unicorn',),
+          style: TextStyle(fontSize: 30, color: ThemeColor.white, fontFamily: 'unicorn',),
         ),
       )
     );
@@ -119,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
     return LinearGradient(
       begin: Alignment.centerLeft,
       end: Alignment.centerRight,
-      colors: [Colors.deepOrange, Colors.orange],
+      colors: [ThemeColor.deepOrange, ThemeColor.orange],
       tileMode: TileMode.repeated);
   }
 
@@ -230,7 +230,7 @@ class _LoginPageState extends State<LoginPage> {
             Text(
               'Register',
               style: TextStyle(
-                  color: Colors.deepOrange,
+                  color: ThemeColor.deepOrange,
                   fontSize: 14,
                   fontWeight: FontWeight.w600),
             ),
@@ -263,12 +263,12 @@ class _LoginPageState extends State<LoginPage> {
             Positioned(
               bottom: 15,
               right: -MediaQuery.of(context).size.width * .46,
-              child: Aureole(-3.5, Colors.greenAccent[700], Colors.green[400])
+              child: Aureole(-3.5, ThemeColor.green700, ThemeColor.green400)
             ),
             Positioned(
               top: 1,
               left: -MediaQuery.of(context).size.width * .32,
-              child: Aureole(-1, Colors.greenAccent[700], Colors.green[400])
+              child: Aureole(-1, ThemeColor.green700, ThemeColor.green400)
             ),
             Container(
               child: ListView(
@@ -324,7 +324,7 @@ class _LoginPageState extends State<LoginPage> {
                     fontWeight: FontWeight.bold,
                     fontFamily: 'unicorn',
                     letterSpacing: 15,
-                    color: Colors.deepOrange
+                    color: ThemeColor.deepOrange
                   )),
                   decoration: BoxDecoration(
                     boxShadow: <BoxShadow> [
@@ -348,7 +348,7 @@ class _LoginPageState extends State<LoginPage> {
       Map body = { "email": _email, "password": _password};
       print(body);
       Navigator.of(context).push(Transition(
-        nextPage: Home(),
+        nextPage: MainPage(currentPage: 0,),
         type: TransitionType.leftToRight
       ));
     }
