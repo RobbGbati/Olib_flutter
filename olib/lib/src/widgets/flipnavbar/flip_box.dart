@@ -59,7 +59,6 @@ class _FlipBoxState extends State<FlipBox> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     controller.dispose();
   }

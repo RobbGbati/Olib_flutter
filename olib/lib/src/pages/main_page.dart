@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:olib/src/tools/theme.dart';
+import 'package:titled_navigation_bar/titled_navigation_bar.dart';
 import './screens/home.dart';
 import './screens/account.dart';
 import './screens/add_post.dart';
 import '../widgets/app_bar.dart';
-import '../widgets/flipnavbar/flip_box_bar.dart';
-import '../widgets/flipnavbar/flip_bar_item.dart';
 
 class MainPage extends StatefulWidget {
   int currentPage;
@@ -28,31 +27,20 @@ class _MainPageState extends State<MainPage> {
       appBar: myAppBar(context),
       backgroundColor: ThemeColor.lightGrey,
       body: pages[widget.currentPage],
-      bottomNavigationBar: FlipBoxBar(
-        selectedIndex: widget.currentPage,
-        items: [
-          FlipBarItem(
-            icon: Icon(Icons.home, color: ThemeColor.white, size: 35,),
-            frontColor: ThemeColor.green700,
-            backColor: ThemeColor.deepOrange
-          ),
-          FlipBarItem(
-            icon: Icon(Icons.add_box, color: ThemeColor.white, size: 35,),
-            frontColor: ThemeColor.green700,
-            backColor: ThemeColor.deepOrange
-          ),
-          FlipBarItem(
-            icon: Icon(Icons.person, color: ThemeColor.white, size: 35,),
-            frontColor: ThemeColor.green700,
-            backColor: ThemeColor.deepOrange
-          )
-        ],
-        onIndexChanged: (value) {
+      bottomNavigationBar: TitledBottomNavigationBar(
+        currentIndex: widget.currentPage, // Use this to update the Bar giving a position
+        onTap: (index){
           setState(() {
-            widget.currentPage = value;
+            widget.currentPage = index;
           });
         },
+        items: [
+            TitledNavigationBarItem(title: Text('Home'), icon: Icons.home),
+            TitledNavigationBarItem(title: Text('Add'), icon: Icons.add_box),
+            TitledNavigationBarItem(title: Text('Profil'), icon: Icons.person),
+        ]
       ),
     );
   }
 }
+

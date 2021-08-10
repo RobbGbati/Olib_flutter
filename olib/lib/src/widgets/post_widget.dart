@@ -42,7 +42,7 @@ class _PostWidgetState extends State<PostWidget> {
                   ),
                 ),
                 Transform.translate(
-                  offset: Offset(10, 20),
+                  offset: Offset(5, 10),
                   child: Card(
                     elevation: 20,
                     child: Container(
@@ -56,9 +56,9 @@ class _PostWidgetState extends State<PostWidget> {
                           color: ThemeColor.white,
                           style: BorderStyle.solid
                         ),
-                        //image: DecorationImage(
-                          //image: NetworkImage(widget.post['image'])
-                        //)
+                        image: DecorationImage(
+                          image: NetworkImage(widget.post['image'])
+                        )
                       ),
                     ),
                   ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:olib/src/tools/theme.dart';
 import 'flip_box.dart';
 
 /// Class for initialising the FlipBox
